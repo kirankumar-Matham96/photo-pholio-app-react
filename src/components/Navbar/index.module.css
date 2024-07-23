@@ -1,0 +1,16 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  background-color: #787ffa;
+  padding: 0.3rem 3rem;
+}
+
+.image {
+  width: 3rem;
+}
+
+.heading {
+  margin-left: 1rem;
+  color: #ffc243;
+  font-size: 1.3rem;
+}
