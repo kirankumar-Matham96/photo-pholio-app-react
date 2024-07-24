@@ -12,6 +12,8 @@ const ButtonComponent = styled.button`
   font-size: ${(props) => props.fontSize || "1.08rem"};
   font-weight: ${(props) => props.fontWeight || "700"};
   width: ${(props) => props.width || "auto"};
+  height: ${(props) => props.height || "auto"};
+  box-shadow: ${(props) => props.shadow || "none"};
 `;
 
 export const Button = (props) => {
