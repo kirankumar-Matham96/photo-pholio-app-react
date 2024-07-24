@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Navbar } from "./components/Navbar";
 import { Button } from "./components/Button";
+import { AddAlbum } from "./components/AddAlbum";
 import { AlbumContainer } from "./components/AlbumsContainer";
 import appStyles from "./App.module.css";
 
@@ -67,6 +68,9 @@ function App() {
           <h1>Your Albums</h1>
           <Button>Add Album</Button>
         </div>
+
+        <AddAlbum />
+
         <AlbumContainer albums={albums} />
       </div>
     </div>
