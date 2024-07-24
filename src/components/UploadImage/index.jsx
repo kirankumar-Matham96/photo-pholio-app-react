@@ -16,6 +16,7 @@ export const UploadImage = ({
   const changeTitleHandle = (e) => {
     setTitle(e.target.value);
   };
+  
   const changeUrlHandle = (e) => {
     setUrl(e.target.value);
   };

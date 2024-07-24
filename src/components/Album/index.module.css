@@ -46,3 +46,8 @@
 .imageContainer {
   width: 50%;
 }
+.searchInput {
+  border: 1.5px solid black;
+  padding: 1rem;
+  font-size: 1rem;
+}
