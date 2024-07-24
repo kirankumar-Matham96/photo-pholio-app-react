@@ -3,9 +3,15 @@ import { Input } from "../Input";
 import { Button } from "../Button";
 import uploadImageFormStyles from "./index.module.css";
 
-export const UploadImage = ({ uploadImageHandle, albumTitle }) => {
-  const [title, setTitle] = useState("");
-  const [url, setUrl] = useState("");
+export const UploadImage = ({
+  uploadImageHandle,
+  currentAlbum,
+  imageToEdit,
+  editImageHandle,
+  setOpenImageUploadForm,
+}) => {
+  const [title, setTitle] = useState(imageToEdit ? imageToEdit.title : "");
+  const [url, setUrl] = useState(imageToEdit ? imageToEdit.url : "");
 
   const changeTitleHandle = (e) => {
     setTitle(e.target.value);
@@ -21,9 +27,11 @@ export const UploadImage = ({ uploadImageHandle, albumTitle }) => {
       url,
       timestamp: Date.now(),
     };
-    console.log("imageData", imageData);
-    uploadImageHandle(imageData);
+    imageToEdit
+      ? editImageHandle(imageToEdit.id, imageData)
+      : uploadImageHandle(imageData);
     resetForm();
+    setOpenImageUploadForm(false);
   };
 
   const resetForm = () => {
@@ -33,7 +41,11 @@ export const UploadImage = ({ uploadImageHandle, albumTitle }) => {
 
   return (
     <div className={uploadImageFormStyles.bgContainer}>
-      <h1>Add image to {albumTitle}</h1>
+      <h1>
+        {imageToEdit
+          ? `Update image ${imageToEdit.title}`
+          : `Add image to ${currentAlbum.title}`}
+      </h1>
       <form onSubmit={submitHandle} className={uploadImageFormStyles.form}>
         <Input
           value={title}
@@ -63,7 +75,7 @@ export const UploadImage = ({ uploadImageHandle, albumTitle }) => {
             padding="10px 28px"
             width="6.8rem"
           >
-            Add
+            {imageToEdit ? "Update" : "Add"}
           </Button>
         </div>
       </form>

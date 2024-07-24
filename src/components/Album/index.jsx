@@ -4,10 +4,17 @@ import { Button } from "../Button";
 import { Tile } from "../Tile";
 import { UploadImage } from "../UploadImage";
 
-export const Album = ({ currentAlbum, goBack, uploadImageHandle }) => {
+export const Album = ({
+  currentAlbum,
+  goBack,
+  uploadImageHandle,
+  deleteImageHandle,
+  editImageHandle,
+}) => {
   const [openImageUploadForm, setOpenImageUploadForm] = useState(false);
   // const [openAlbumCreateForm, setOpenAlbumCreateForm] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [imageToEdit, setImageToEdit] = useState(null);
 
   // useEffect(() => {
   //   console.log("effect");
@@ -43,12 +50,23 @@ export const Album = ({ currentAlbum, goBack, uploadImageHandle }) => {
     }
   };
 
+  const editImageDataHandle = (id) => {
+    setOpenImageUploadForm(true);
+    console.log("currentAlbum => ", currentAlbum);
+    console.log("id => ", id);
+    const selectedImage = currentAlbum.pics.find((item) => item.id === id);
+    setImageToEdit(selectedImage);
+  };
+
   return (
     <div className={albumStyles.albumContainer}>
       {openImageUploadForm && (
         <UploadImage
           uploadImageHandle={uploadImageHandle}
-          albumTitle={currentAlbum.title}
+          currentAlbum={currentAlbum}
+          imageToEdit={imageToEdit}
+          editImageHandle={editImageHandle}
+          setOpenImageUploadForm={setOpenImageUploadForm}
         />
       )}
       <header className={albumStyles.header}>
@@ -104,8 +122,10 @@ export const Album = ({ currentAlbum, goBack, uploadImageHandle }) => {
         {currentAlbum.pics?.map((pic) => (
           <Tile
             key={pic.id}
-            album={{ url: pic.url, title: pic.title }}
+            album={{ url: pic.url, title: pic.title, id: pic.id }}
             click={() => imageClickHandle(pic.id)}
+            deleteImageHandle={deleteImageHandle}
+            editImageDataHandle={editImageDataHandle}
           />
         ))}
       </div>

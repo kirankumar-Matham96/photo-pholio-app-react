@@ -43,23 +43,6 @@ function App() {
   };
 
   const addImageHandle = (imageData) => {
-    console.log("imageData => ", imageData);
-
-    // 1. find the current album
-    // currentAlbum
-
-    // 2. find the current album in the albums array
-    // albums[currentAlbum]
-
-    // 3. Add image data
-    console.log("album length => ", albums.length + 1);
-    // const newCurrentAlbum = [
-    //   {
-    //     id: currentAlbum.pics ? currentAlbum.pics.length + 1 : 1,
-    //     ...imageData,
-    //   },
-    //   ...currentAlbum?.pics,
-    // ];
     const newCurrentAlbum = currentAlbum;
 
     if (currentAlbum.pics) {
@@ -70,7 +53,6 @@ function App() {
       newCurrentAlbum.pics = [imageData];
     }
 
-    console.log("newCurrentAlbum => ", newCurrentAlbum.id);
     setCurrentAlbum(newCurrentAlbum);
 
     const newAlbums = albums.map((album) => {
@@ -80,14 +62,47 @@ function App() {
       return album;
     });
 
-    // 4. update the albums
     setAlbums(newAlbums);
+  };
+
+  const deleteImageHandle = (id) => {
+    const newAlbums = albums.map((album) => {
+      if (album.id === currentAlbum.id) {
+        // find image
+        const imageIndex = album.pics.findIndex((pic) => pic.id === id);
+        album.pics.splice(imageIndex, 1);
+      }
+      return album;
+    });
+
+    setAlbums(newAlbums);
+  };
+
+  const editImageHandle = (id, newImageData) => {
+    const instanceOfCurrentAlbum = currentAlbum;
+    const newUpdatedAlbumPics = currentAlbum.pics.map((item) => {
+      if (item.id === id) {
+        item.title = newImageData.title;
+        item.url = newImageData.url;
+      }
+      return item;
+    });
+
+    instanceOfCurrentAlbum.pics = newUpdatedAlbumPics;
+    const updatedAlbums = albums.map((album) => {
+      if (album.id === instanceOfCurrentAlbum.id) {
+        album = instanceOfCurrentAlbum;
+      }
+      return album;
+    });
+    setAlbums(updatedAlbums);
   };
 
   return (
     <div>
-      {console.log({ currentAlbum })}
-      {console.log("pics => ", currentAlbum?.pics)}
+      {console.log("currentAlbum in render => ", currentAlbum)}
+      {console.log("pics in render => ", currentAlbum?.pics)}
+      {console.log("albums in render => ", albums)}
       <Navbar />
       {!currentAlbum ? (
         <div className={appStyles.main}>
@@ -107,7 +122,6 @@ function App() {
           <AlbumContainer
             albums={albums}
             albumTileClickHandle={albumTileClickHandle}
-            // uploadImageHandle={uploadImageHandle}
           />
         </div>
       ) : (
@@ -116,6 +130,8 @@ function App() {
             currentAlbum={currentAlbum}
             goBack={setCurrentAlbum}
             uploadImageHandle={addImageHandle}
+            deleteImageHandle={deleteImageHandle}
+            editImageHandle={editImageHandle}
           />
         </div>
       )}
