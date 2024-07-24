@@ -1,5 +1,4 @@
 import { useState } from "react";
-
 import { Navbar } from "./components/Navbar";
 import { Button } from "./components/Button";
 import { AlbumContainer } from "./components/AlbumsContainer";
@@ -63,11 +62,11 @@ function App() {
   return (
     <div>
       <Navbar />
-      <div className={appStyles.header}>
-        <h1>Your Albums</h1>
-        <Button>Add Album</Button>
-      </div>
-      <div className={appStyles.albumsContainer}>
+      <div className={appStyles.main}>
+        <div className={appStyles.header}>
+          <h1>Your Albums</h1>
+          <Button>Add Album</Button>
+        </div>
         <AlbumContainer albums={albums} />
       </div>
     </div>
