@@ -8,7 +8,7 @@ import appStyles from "./App.module.css";
 
 const albumsList = [
   {
-    title: "First Album",
+    title: "Anime",
     id: "1",
     pics: [
       {
@@ -23,51 +23,6 @@ const albumsList = [
       },
     ],
   },
-  {
-    title: "Second Album",
-    id: "2",
-    pics: [{ url: "", title: "image title" }],
-  },
-  {
-    title: "Third Album",
-    id: "3",
-    pics: [{ url: "", title: "image title" }],
-  },
-  {
-    title: "Fourth Album",
-    id: "4",
-    pics: [{ url: "", title: "image title" }],
-  },
-  {
-    title: "Fifth Album",
-    id: "5",
-    pics: [{ url: "", title: "image title" }],
-  },
-  {
-    title: "Fifth Album",
-    id: "6",
-    pics: [{ url: "", title: "image title" }],
-  },
-  {
-    title: "Fifth Album",
-    id: "7",
-    pics: [{ url: "", title: "image title" }],
-  },
-  {
-    title: "Fifth Album",
-    id: "8",
-    pics: [{ url: "", title: "image title" }],
-  },
-  {
-    title: "Fifth Album",
-    id: "9",
-    pics: [{ url: "", title: "image title" }],
-  },
-  {
-    title: "Fifth Album",
-    id: "10",
-    pics: [{ url: "", title: "image title" }],
-  },
 ];
 
 function App() {
@@ -76,17 +31,67 @@ function App() {
   const [currentAlbum, setCurrentAlbum] = useState(null);
 
   const albumTileClickHandle = (id) => {
-    console.log("album clicked");
-    const selectedAlbum = albumsList.find((item) => item.id === id);
+    const selectedAlbum = albums.find((item) => item.id === id);
     setCurrentAlbum(selectedAlbum);
+  };
+
+  const addAlbumHandle = (data) => {
+    setAlbums([
+      { ...data, id: albums.length + 1, timestamp: Date.now() },
+      ...albums,
+    ]);
+  };
+
+  const addImageHandle = (imageData) => {
+    console.log("imageData => ", imageData);
+
+    // 1. find the current album
+    // currentAlbum
+
+    // 2. find the current album in the albums array
+    // albums[currentAlbum]
+
+    // 3. Add image data
+    console.log("album length => ", albums.length + 1);
+    // const newCurrentAlbum = [
+    //   {
+    //     id: currentAlbum.pics ? currentAlbum.pics.length + 1 : 1,
+    //     ...imageData,
+    //   },
+    //   ...currentAlbum?.pics,
+    // ];
+    const newCurrentAlbum = currentAlbum;
+
+    if (currentAlbum.pics) {
+      imageData.id = currentAlbum.pics.length + 1;
+      newCurrentAlbum.pics.unshift(imageData);
+    } else {
+      imageData.id = 1;
+      newCurrentAlbum.pics = [imageData];
+    }
+
+    console.log("newCurrentAlbum => ", newCurrentAlbum.id);
+    setCurrentAlbum(newCurrentAlbum);
+
+    const newAlbums = albums.map((album) => {
+      if (album.id === newCurrentAlbum.id) {
+        album = newCurrentAlbum;
+      }
+      return album;
+    });
+
+    // 4. update the albums
+    setAlbums(newAlbums);
   };
 
   return (
     <div>
+      {console.log({ currentAlbum })}
+      {console.log("pics => ", currentAlbum?.pics)}
       <Navbar />
       {!currentAlbum ? (
         <div className={appStyles.main}>
-          {formOpen && <AddAlbum />}
+          {formOpen && <AddAlbum addAlbumHandle={addAlbumHandle} />}
           <div className={appStyles.header}>
             <h1>Your Albums</h1>
             <Button
@@ -102,11 +107,16 @@ function App() {
           <AlbumContainer
             albums={albums}
             albumTileClickHandle={albumTileClickHandle}
+            // uploadImageHandle={uploadImageHandle}
           />
         </div>
       ) : (
         <div className={appStyles.albumContainer}>
-          <Album currentAlbum={currentAlbum} goBack={setCurrentAlbum} />
+          <Album
+            currentAlbum={currentAlbum}
+            goBack={setCurrentAlbum}
+            uploadImageHandle={addImageHandle}
+          />
         </div>
       )}
     </div>

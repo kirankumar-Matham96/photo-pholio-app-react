@@ -2,10 +2,16 @@ import React, { useState } from "react";
 import albumStyles from "./index.module.css";
 import { Button } from "../Button";
 import { Tile } from "../Tile";
+import { UploadImage } from "../UploadImage";
 
-export const Album = ({ currentAlbum, goBack }) => {
-  const [openUploadForm, setOpenUploadForm] = useState(false);
+export const Album = ({ currentAlbum, goBack, uploadImageHandle }) => {
+  const [openImageUploadForm, setOpenImageUploadForm] = useState(false);
+  // const [openAlbumCreateForm, setOpenAlbumCreateForm] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
+
+  // useEffect(() => {
+  //   console.log("effect");
+  // }, [currentAlbum]);
 
   const imageClickHandle = (id) => {
     setSelectedImage(currentAlbum.pics.find((item) => item.id === id));
@@ -16,11 +22,9 @@ export const Album = ({ currentAlbum, goBack }) => {
   };
 
   const prevHandle = () => {
-    console.log("prevHandle");
     const index = currentAlbum.pics.findIndex(
       (item) => JSON.stringify(item) === JSON.stringify(selectedImage)
     );
-    console.log("index => ", index);
     if (index - 1 >= 0) {
       setSelectedImage(currentAlbum.pics[index - 1]);
     } else {
@@ -29,12 +33,9 @@ export const Album = ({ currentAlbum, goBack }) => {
   };
 
   const nextHandle = () => {
-    console.log("nextHandle");
     const index = currentAlbum.pics.findIndex(
       (item) => JSON.stringify(item) === JSON.stringify(selectedImage)
     );
-    console.log("index => ", index);
-    console.log("last index => ", currentAlbum.pics.length - 1);
     if (index + 1 <= currentAlbum.pics.length - 1) {
       setSelectedImage(currentAlbum.pics[index + 1]);
     } else {
@@ -44,7 +45,12 @@ export const Album = ({ currentAlbum, goBack }) => {
 
   return (
     <div className={albumStyles.albumContainer}>
-      {console.log("selectedImage => ", selectedImage)}
+      {openImageUploadForm && (
+        <UploadImage
+          uploadImageHandle={uploadImageHandle}
+          albumTitle={currentAlbum.title}
+        />
+      )}
       <header className={albumStyles.header}>
         <div className={albumStyles.innerDiv}>
           <Button
@@ -84,18 +90,18 @@ export const Album = ({ currentAlbum, goBack }) => {
           </Button>
           <Button
             onClick={() => {
-              setOpenUploadForm(!openUploadForm);
+              setOpenImageUploadForm(!openImageUploadForm);
             }}
-            bgColor={openUploadForm ? "rgba(255, 19, 0, .1)" : null}
-            border={openUploadForm ? "2px solid red" : null}
-            color={openUploadForm ? "#ff1300" : null}
+            bgColor={openImageUploadForm ? "rgba(255, 19, 0, .1)" : null}
+            border={openImageUploadForm ? "2px solid red" : null}
+            color={openImageUploadForm ? "#ff1300" : null}
           >
-            {openUploadForm ? "cancel" : "Add image"}
+            {openImageUploadForm ? "cancel" : "Add image"}
           </Button>
         </div>
       </header>
       <div className={albumStyles.imagesContainer}>
-        {currentAlbum.pics?.map((pic, index) => (
+        {currentAlbum.pics?.map((pic) => (
           <Tile
             key={pic.id}
             album={{ url: pic.url, title: pic.title }}
