@@ -5,6 +5,9 @@
   border-radius: 12px 12px 0 0;
   display: flex;
   flex-direction: column;
+  position: relative;
+  box-shadow: 0 2px 8px 0 #dbdada;
+  transition: 0.2s ease-in;
 }
 .albumImageContainer {
   width: 100%;
@@ -30,6 +33,9 @@
 }
 .albumImage {
   width: 4rem;
+}
+.icon {
+  width: 100%;
 }
 .image {
   width: 100%;
@@ -61,4 +67,28 @@
   margin: 0;
   font-size: 1rem;
   font-weight: 500;
+}
+
+.btnsContainer {
+  opacity: 0;
+  position: absolute;
+  right: -34px;
+  top: -14px;
+  transition: 0.3s ease-in-out;
+}
+
+.btnsContainer > Button:hover {
+  scale: 95% 95%;
+  transition: 0.3s ease-in-out;
+}
+
+.tileContainer:hover {
+  background-color: #07f;
+}
+
+.tileContainer:hover > .albumTitleContainer,
+.tileContainer:hover > .imageTitleContainer,
+.tileContainer:hover > .btnsContainer {
+  color: white;
+  opacity: 1;
 }

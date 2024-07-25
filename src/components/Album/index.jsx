@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import albumStyles from "./index.module.css";
 import { Button } from "../Button";
 import { Input } from "../Input";
@@ -13,14 +13,16 @@ export const Album = ({
   editImageHandle,
 }) => {
   const [openImageUploadForm, setOpenImageUploadForm] = useState(false);
-  // const [openAlbumCreateForm, setOpenAlbumCreateForm] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageToEdit, setImageToEdit] = useState(null);
   const [pics, setPics] = useState(currentAlbum.pics);
   const [searchable, setSearchable] = useState(false);
-  // useEffect(() => {
-  //   console.log("effect");
-  // }, [currentAlbum]);
+
+  useEffect(() => {
+    console.log("in useEffect");
+    console.log("currentAlbum.pics => ", currentAlbum.pics);
+    setPics(currentAlbum.pics);
+  }, [currentAlbum.pics]);
 
   const searchHandle = (query) => {
     // filter with search term

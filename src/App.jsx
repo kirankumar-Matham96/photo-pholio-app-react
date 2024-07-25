@@ -4,78 +4,145 @@ import { Button } from "./components/Button";
 import { AddAlbum } from "./components/AddAlbum";
 import { AlbumContainer } from "./components/AlbumsContainer";
 import { Album } from "./components/Album";
+import { db } from "./firestore.config";
+import {
+  collection,
+  addDoc,
+  doc,
+  onSnapshot,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+} from "firebase/firestore";
 import appStyles from "./App.module.css";
 
-const albumsList = [
-  {
-    title: "Anime",
-    id: "1",
-    pics: [
-      {
-        id: "1",
-        url: "https://img.asmedia.epimg.net/resizer/v2/YFFD3QBX2ZHX5CQCLGKWBTBUJA.png?auth=36c623cae111b8cb33e03f29a9d01acf02bbe47543da3edd735fccb8f7d64a29&width=644&height=362&smart=true",
-        title: "GolDRoger",
-      },
-      {
-        id: "2",
-        url: "https://imgix.ranker.com/list_img_v2/6502/3206502/original/3206502?fit=crop&fm=pjpg&q=80&dpr=2&w=1200&h=720",
-        title: "Shanks",
-      },
-    ],
-  },
-];
-
 function App() {
-  const [albums, setAlbums] = useState(albumsList);
+  const [albums, setAlbums] = useState([]);
   const [formOpen, setFormOpen] = useState(false);
   const [currentAlbum, setCurrentAlbum] = useState(null);
+
+  // firestore live listener
+  const unsubscribe = onSnapshot(collection(db, "photo-pholio"), (snapshot) => {
+    const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    setAlbums(data);
+  });
+
+  const updateDocument = async (docRef, updatedDocument) => {
+    await updateDoc(docRef, updatedDocument);
+  };
+
+  const addPicInDoc = async (docRef, imageData) => {
+    try {
+      await updateDoc(docRef, {
+        pics: arrayUnion(imageData),
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const deletePicInDoc = async (docRef, itemToDelete) => {
+    try {
+      await updateDoc(docRef, {
+        pics: arrayRemove(itemToDelete),
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const albumTileClickHandle = (id) => {
     const selectedAlbum = albums.find((item) => item.id === id);
     setCurrentAlbum(selectedAlbum);
   };
 
-  const addAlbumHandle = (data) => {
-    setAlbums([
-      { ...data, id: albums.length + 1, timestamp: Date.now() },
-      ...albums,
-    ]);
+  const addAlbumHandle = async (data) => {
+    // adding document to the firestore
+    const docRef = await addDoc(collection(db, "photo-pholio"), {
+      title: data.title,
+      timestamp: new Date(),
+    });
+    setAlbums([{ ...data, id: docRef.id }, ...albums]);
   };
 
   const addImageHandle = (imageData) => {
-    const newCurrentAlbum = currentAlbum;
+    // Generate a unique ID for the new image
+    imageData.id = `${Math.floor(
+      Math.random() * (999999 - 9) + 9
+    )}_${Date.now()}_${currentAlbum.title.split(" ")[0]}_${
+      imageData.title.split(" ")[0]
+    }`;
 
-    if (currentAlbum.pics) {
-      imageData.id = currentAlbum.pics.length + 1;
-      newCurrentAlbum.pics.unshift(imageData);
-    } else {
-      imageData.id = 1;
-      newCurrentAlbum.pics = [imageData];
-    }
+    const updatedPics = currentAlbum.pics
+      ? [imageData, ...currentAlbum.pics]
+      : [imageData];
+    const updatedCurrentAlbum = { ...currentAlbum, pics: updatedPics };
+    setCurrentAlbum(updatedCurrentAlbum);
+    const updatedAlbums = albums.map((album) =>
+      album.id === currentAlbum.id ? updatedCurrentAlbum : album
+    );
+    setAlbums(updatedAlbums);
 
-    setCurrentAlbum(newCurrentAlbum);
-
-    const newAlbums = albums.map((album) => {
-      if (album.id === newCurrentAlbum.id) {
-        album = newCurrentAlbum;
-      }
-      return album;
-    });
-
-    setAlbums(newAlbums);
+    // Adding images to the Firestore document
+    const docRef = doc(db, "photo-pholio", currentAlbum.id);
+    addPicInDoc(docRef, imageData);
   };
 
+  // const deleteImageHandle = (id) => {
+  //   console.log("id of the pic => ", id);
+  //   let itemToDelete = null;
+  //   const newAlbums = albums.map((album) => {
+  //     if (album.id === currentAlbum.id) {
+  //       // find image
+  //       const imageIndex = album.pics.findIndex((pic) => pic.id === id);
+  //       itemToDelete = album.pics.splice(imageIndex, 1);
+  //     }
+  //     return album;
+  //   });
+  //   setAlbums(newAlbums);
+
+  //   // deletePicFromFirebase
+  //   const docRef = doc(db, "photo-pholio", currentAlbum.id);
+  //   deletePicInDoc(docRef, itemToDelete[0]);
+  // };
+
   const deleteImageHandle = (id) => {
+    console.log("ID of the pic to delete =>", id);
+
+    let itemToDelete = null;
     const newAlbums = albums.map((album) => {
       if (album.id === currentAlbum.id) {
-        // find image
+        // Find the index of the image to delete
         const imageIndex = album.pics.findIndex((pic) => pic.id === id);
-        album.pics.splice(imageIndex, 1);
+
+        if (imageIndex !== -1) {
+          itemToDelete = album.pics[imageIndex];
+          album.pics = [
+            ...album.pics.slice(0, imageIndex),
+            ...album.pics.slice(imageIndex + 1),
+          ];
+        }
       }
       return album;
     });
 
+    // updating the current album
+    const updatedCurrentAlbum = newAlbums.find(
+      (album) => album.id === currentAlbum.id
+    );
+    setCurrentAlbum(updatedCurrentAlbum);
+
+    if (!itemToDelete) {
+      console.error("Image not found, cannot delete.");
+      return;
+    }
+
+    // Update state with the new albums array
     setAlbums(newAlbums);
+
+    // Delete the image from Firestore
+    const docRef = doc(db, "photo-pholio", currentAlbum.id);
+    deletePicInDoc(docRef, itemToDelete);
   };
 
   const editImageHandle = (id, newImageData) => {
@@ -89,20 +156,22 @@ function App() {
     });
 
     instanceOfCurrentAlbum.pics = newUpdatedAlbumPics;
+
+    // update doc in firestore
+    const docRef = doc(db, "photo-pholio", currentAlbum.id);
+    updateDocument(docRef, instanceOfCurrentAlbum);
+
     const updatedAlbums = albums.map((album) => {
       if (album.id === instanceOfCurrentAlbum.id) {
         album = instanceOfCurrentAlbum;
       }
       return album;
     });
-    setAlbums(updatedAlbums);
+    setAlbums(updatedAlbums, instanceOfCurrentAlbum);
   };
 
   return (
     <div>
-      {console.log("currentAlbum in render => ", currentAlbum)}
-      {console.log("pics in render => ", currentAlbum?.pics)}
-      {console.log("albums in render => ", albums)}
       <Navbar />
       {!currentAlbum ? (
         <div className={appStyles.main}>

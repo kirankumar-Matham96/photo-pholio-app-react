@@ -11,14 +11,13 @@ export const Tile = ({
   return (
     <div className={albumTileStyles.tileContainer} onClick={click}>
       {album.url && (
-        <div>
+        <div className={albumTileStyles.btnsContainer}>
           <Button
             borderRadius="25rem"
             width="2.5rem"
             height="2.5rem"
-            padding="0.5rem"
-            bgColor="#fff"
-            shadow="0 0 3px 2px  #e1e1e1"
+            padding="0"
+            bgColor="#07f"
             border="none"
             margin="0 20px 0 0"
             onClick={(e) => {
@@ -27,8 +26,8 @@ export const Tile = ({
             }}
           >
             <img
-              className={albumTileStyles.image}
-              src="https://cdn-icons-png.flaticon.com/128/2985/2985043.png"
+              className={albumTileStyles.icon}
+              src="https://cdn-icons-png.flaticon.com/128/10336/10336582.png"
               alt="edit"
             />
           </Button>
@@ -36,9 +35,8 @@ export const Tile = ({
             borderRadius="25rem"
             width="2.5rem"
             height="2.5rem"
-            padding="0.5rem"
-            bgColor="#fff"
-            shadow="0 0 3px 2px  #e1e1e1"
+            padding="0"
+            bgColor="red"
             border="none"
             margin="0 20px 0 0"
             onClick={(e) => {
@@ -47,8 +45,8 @@ export const Tile = ({
             }}
           >
             <img
-              className={albumTileStyles.image}
-              src="https://cdn-icons-png.flaticon.com/128/484/484662.png"
+              className={albumTileStyles.icon}
+              src="https://cdn-icons-png.flaticon.com/128/9790/9790368.png"
               alt="delete"
             />
           </Button>
