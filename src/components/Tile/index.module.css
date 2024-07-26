@@ -7,7 +7,7 @@
   flex-direction: column;
   position: relative;
   box-shadow: 0 2px 8px 0 #dbdada;
-  transition: 0.2s ease-in;
+  transition: 0.2s ease-in-out;
 }
 .albumImageContainer {
   width: 100%;

@@ -19,11 +19,13 @@ export const Album = ({
   const [searchable, setSearchable] = useState(false);
 
   useEffect(() => {
-    console.log("in useEffect");
-    console.log("currentAlbum.pics => ", currentAlbum.pics);
     setPics(currentAlbum.pics);
   }, [currentAlbum.pics]);
 
+  /**
+   * filters the matching image
+   * @param {String} query - search query
+   */
   const searchHandle = (query) => {
     // filter with search term
     const searchResults = currentAlbum.pics.filter((pic) =>
@@ -32,14 +34,24 @@ export const Album = ({
     setPics(searchResults);
   };
 
+  /**
+   * sets the selected image and displays the big image
+   * @param {Strong} id - image id
+   */
   const imageClickHandle = (id) => {
     setSelectedImage(currentAlbum.pics.find((item) => item.id === id));
   };
 
+  /**
+   * closes the big image
+   */
   const closeImageHandle = () => {
     setSelectedImage(null);
   };
 
+  /**
+   * displays the previous image in the album
+   */
   const prevHandle = () => {
     const index = currentAlbum.pics.findIndex(
       (item) => JSON.stringify(item) === JSON.stringify(selectedImage)
@@ -51,6 +63,9 @@ export const Album = ({
     }
   };
 
+  /**
+   * displays the next image in the album
+   */
   const nextHandle = () => {
     const index = currentAlbum.pics.findIndex(
       (item) => JSON.stringify(item) === JSON.stringify(selectedImage)
@@ -62,10 +77,12 @@ export const Album = ({
     }
   };
 
+  /**
+   * sets the image data to the form to edit
+   * @param {String} id - image id
+   */
   const editImageDataHandle = (id) => {
     setOpenImageUploadForm(true);
-    console.log("currentAlbum => ", currentAlbum);
-    console.log("id => ", id);
     const selectedImage = currentAlbum.pics.find((item) => item.id === id);
     setImageToEdit(selectedImage);
   };

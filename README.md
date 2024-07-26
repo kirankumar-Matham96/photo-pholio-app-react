@@ -1,70 +1,93 @@
-# Getting Started with Create React App
+# Photo-Pholio
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+An image organizing app simulates album. Can add albums and add, edit and delete images in the albums. Can view the image by just clicking on them. Built with react and firestore.
 
-## Available Scripts
+## Table of Contents
 
-In the project directory, you can run:
+- [Features](#features)
+- [Installation](#installation)
+- [Technologies Used](#technologies-used)
+- [Known Issues & Improvements](#known-issues-&-improvements)
+- [Contributing](#contributing)
+- [License](#license)
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- Can view the list of albums.
+  - Main screen with the albums list.
+  - Every item is an album, which contains set of images.
+- Adding album:
+  - By clicking the add album button the the top right position, a form will be displayed.
+  - By adding a title, you can create a new album.
+- Album:
+  - On clicking any album will open the album and displays the list of images init.
+  - On clicking the image, the image will be shown.
+  - Next and Previous buttons will be helpful for viewing the images in the album.
+  - Close button at the right top corner will help to close the image.
+- Adding an image to the album:
+  - By clicking the add album button in the album, a form to add an image will be displayed.
+  - By providing the title and the url of the image, it will add the image to the album.
+- Edit and Delete Image:
+  - On hovering the image tile, edit and delete options will be revealed.
+  - On clicking the delete button, the image will be deleted.
+  - On clicking the edit button, the form will be populated with that image data to be edited.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Installation
 
-### `npm test`
+1. Clone the repository:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+   ```bash
+   git clone https://github.com/kirankumar-Matham96/photo-pholio-app-react.git
 
-### `npm run build`
+   ```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2. Install the dependencies:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+   ```bash
+   npm install
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+3. Start the app: ([see React Docs for more scripts](#react-readme-file))
 
-### `npm run eject`
+```bash
+  npm start
+```
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+4. Open your browser and navigate to `http://localhost:3000`
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Technologies Used
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- ReactJS
+- react-dom
+- react-scripts
+- styled-components
+- firebase
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## React Reference
 
-## Learn More
+- [ReadMe.md](https://github.com/facebook/create-react-app/blob/main/packages/cra-template/template/README.md)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Known Issues & Improvements
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Issues:
 
-### Code Splitting
+  - When an image or album is added or deleted, the UI is rendering a bit later. Adding the state manipulation also not helped it.
+  - Even though utilizing the live data rendering from the firestore, the data in the albums is not updated until reload the page or close and open the album, when the app opened in multiple windows.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- Improvements:
 
-### Analyzing the Bundle Size
+  - Edit and delete options can be implemented for the albums.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Contributing
 
-### Making a Progressive Web App
+Contributions are welcome! Please follow these steps:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature/your-feature`)
+3. Commit your changes (`git commit -m 'Add some feature'`)
+4. Push to the branch (`git push origin feature/your-feature`)
+5. Open a pull request
 
-### Advanced Configuration
+## License
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

@@ -6,6 +6,10 @@ import addAlbumFormStyles from "./index.module.css";
 export const AddAlbum = ({ addAlbumHandle }) => {
   const [title, setTitle] = useState("");
 
+  /**
+   * To handle form submit
+   * @param {Object} e - event
+   */
   const submitHandle = (e) => {
     e.preventDefault();
     const albumData = {
@@ -15,10 +19,18 @@ export const AddAlbum = ({ addAlbumHandle }) => {
     clearFormHandle(e);
   };
 
+  /**
+   * change handle for the title
+   * @param {Object} e - event
+   */
   const titleChangeHandle = (e) => {
     setTitle(e.target.value);
   };
 
+  /**
+   * handle to clear the form
+   * @param {Object} e - event
+   */
   const clearFormHandle = (e) => {
     setTitle("");
   };

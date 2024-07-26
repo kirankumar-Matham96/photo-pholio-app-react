@@ -45,7 +45,9 @@
   width: 100%;
 }
 .imageContainer {
-  width: 50%;
+  width: 55%;
+  height: 70vh;
+  overflow-y: auto;
 }
 .searchInput {
   border: 1.5px solid black;

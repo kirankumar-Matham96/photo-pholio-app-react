@@ -14,6 +14,8 @@ import {
   arrayUnion,
   arrayRemove,
 } from "firebase/firestore";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import appStyles from "./App.module.css";
 
 function App() {
@@ -21,16 +23,29 @@ function App() {
   const [formOpen, setFormOpen] = useState(false);
   const [currentAlbum, setCurrentAlbum] = useState(null);
 
+  // toastify alert function
+  const notify = (message) => toast(message);
+
   // firestore live listener
   const unsubscribe = onSnapshot(collection(db, "photo-pholio"), (snapshot) => {
     const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     setAlbums(data);
   });
 
+  /**
+   * Updates the document in firestore
+   * @param {Object} docRef - collection object
+   * @param {Object} updatedDocument - new updated document
+   */
   const updateDocument = async (docRef, updatedDocument) => {
     await updateDoc(docRef, updatedDocument);
   };
 
+  /**
+   * Adds a picture in the document array
+   * @param {Object} docRef - collection object
+   * @param {Object} imageData - image data object
+   */
   const addPicInDoc = async (docRef, imageData) => {
     try {
       await updateDoc(docRef, {
@@ -41,6 +56,11 @@ function App() {
     }
   };
 
+  /**
+   * Delete image from the document array
+   * @param {Object} docRef - collection object
+   * @param {Object} itemToDelete - item object to delete
+   */
   const deletePicInDoc = async (docRef, itemToDelete) => {
     try {
       await updateDoc(docRef, {
@@ -51,11 +71,19 @@ function App() {
     }
   };
 
+  /**
+   * Click handle to select the current album
+   * @param {String} id - id of the album
+   */
   const albumTileClickHandle = (id) => {
     const selectedAlbum = albums.find((item) => item.id === id);
     setCurrentAlbum(selectedAlbum);
   };
 
+  /**
+   * Creates a new album
+   * @param {Object} data - album form data
+   */
   const addAlbumHandle = async (data) => {
     // adding document to the firestore
     const docRef = await addDoc(collection(db, "photo-pholio"), {
@@ -63,52 +91,48 @@ function App() {
       timestamp: new Date(),
     });
     setAlbums([{ ...data, id: docRef.id }, ...albums]);
+    notify(`${data.title} album added successfully!`);
   };
 
+  /**
+   * Adds an image to the a;bum
+   * @param {Object} imageData - image data object
+   */
   const addImageHandle = (imageData) => {
-    // Generate a unique ID for the new image
+    // generate a unique ID for the new image
     imageData.id = `${Math.floor(
       Math.random() * (999999 - 9) + 9
     )}_${Date.now()}_${currentAlbum.title.split(" ")[0]}_${
       imageData.title.split(" ")[0]
     }`;
 
+    // updating pics array
     const updatedPics = currentAlbum.pics
       ? [imageData, ...currentAlbum.pics]
       : [imageData];
+
+    // updating current album
     const updatedCurrentAlbum = { ...currentAlbum, pics: updatedPics };
     setCurrentAlbum(updatedCurrentAlbum);
+
+    // updating albums
     const updatedAlbums = albums.map((album) =>
       album.id === currentAlbum.id ? updatedCurrentAlbum : album
     );
     setAlbums(updatedAlbums);
+    notify(`Image added successfully!`);
 
     // Adding images to the Firestore document
     const docRef = doc(db, "photo-pholio", currentAlbum.id);
     addPicInDoc(docRef, imageData);
   };
 
-  // const deleteImageHandle = (id) => {
-  //   console.log("id of the pic => ", id);
-  //   let itemToDelete = null;
-  //   const newAlbums = albums.map((album) => {
-  //     if (album.id === currentAlbum.id) {
-  //       // find image
-  //       const imageIndex = album.pics.findIndex((pic) => pic.id === id);
-  //       itemToDelete = album.pics.splice(imageIndex, 1);
-  //     }
-  //     return album;
-  //   });
-  //   setAlbums(newAlbums);
-
-  //   // deletePicFromFirebase
-  //   const docRef = doc(db, "photo-pholio", currentAlbum.id);
-  //   deletePicInDoc(docRef, itemToDelete[0]);
-  // };
-
+  /**
+   * Deletes the image from the pictures array of the current album
+   * @param {String} id - image id
+   * @returns null if the image is not found
+   */
   const deleteImageHandle = (id) => {
-    console.log("ID of the pic to delete =>", id);
-
     let itemToDelete = null;
     const newAlbums = albums.map((album) => {
       if (album.id === currentAlbum.id) {
@@ -139,14 +163,22 @@ function App() {
 
     // Update state with the new albums array
     setAlbums(newAlbums);
+    notify(`Image deleted successfully!`);
 
     // Delete the image from Firestore
     const docRef = doc(db, "photo-pholio", currentAlbum.id);
     deletePicInDoc(docRef, itemToDelete);
   };
 
+  /**
+   * Handle to manage image editing
+   * @param {String} id - image id
+   * @param {Object} newImageData - updated data of the selected image
+   */
   const editImageHandle = (id, newImageData) => {
     const instanceOfCurrentAlbum = currentAlbum;
+
+    // updating the pics array
     const newUpdatedAlbumPics = currentAlbum.pics.map((item) => {
       if (item.id === id) {
         item.title = newImageData.title;
@@ -157,22 +189,25 @@ function App() {
 
     instanceOfCurrentAlbum.pics = newUpdatedAlbumPics;
 
-    // update doc in firestore
-    const docRef = doc(db, "photo-pholio", currentAlbum.id);
-    updateDocument(docRef, instanceOfCurrentAlbum);
-
+    // updating the albums
     const updatedAlbums = albums.map((album) => {
       if (album.id === instanceOfCurrentAlbum.id) {
         album = instanceOfCurrentAlbum;
       }
       return album;
     });
-    setAlbums(updatedAlbums, instanceOfCurrentAlbum);
+    setAlbums(updatedAlbums);
+    notify(`Image updated successfully!`);
+
+    // update doc in firestore
+    const docRef = doc(db, "photo-pholio", currentAlbum.id);
+    updateDocument(docRef, instanceOfCurrentAlbum);
   };
 
   return (
     <div>
       <Navbar />
+      <ToastContainer theme="dark" />
       {!currentAlbum ? (
         <div className={appStyles.main}>
           {formOpen && <AddAlbum addAlbumHandle={addAlbumHandle} />}
