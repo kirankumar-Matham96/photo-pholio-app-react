@@ -54,7 +54,7 @@ export const UploadImage = ({
           onChange={changeTitleHandle}
           required
         />
-        <Input value={url} typw="url" onChange={changeUrlHandle} required />
+        <Input value={url} type="url" onChange={changeUrlHandle} required />
         <div className={uploadImageFormStyles.btnContainer}>
           <Button
             type="reset"
